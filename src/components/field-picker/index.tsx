@@ -24,8 +24,8 @@ const FormFieldsPicker = () => {
 
   return (
     <Popover
-      defaultOpen={!isMobile}
       open={isExpanded}
+      defaultOpen={!isMobile}
       onOpenChange={setIsExpanded}
     >
       <PopoverTrigger asChild title="Add field(s)">
@@ -48,8 +48,8 @@ const FormFieldsPicker = () => {
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="w-fit h-fit min-w-0 border-none bg-transparent"
-        align={isMobile ? "start" : "center"}
+        align="center"
+        className="w-fit h-fit min-w-0 border-none bg-transparent overflow-hidden"
         side={isMobile ? "top" : "bottom"}
       >
         <motion.ul

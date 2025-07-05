@@ -10,13 +10,13 @@ const FormTitle = ({ mode }: { mode: Form_Modes }) => {
     selectedField,
     formMetaData,
     updateFormMetaData,
-    updateSelectedField,
+    updateSelectedFieldId,
   } = useFormStore();
   const isSelected = mode === FORM_MODES.EDIT && selectedField === null;
 
   const handleClick = () => {
     if (mode === FORM_MODES.EDIT) {
-      updateSelectedField(null);
+      updateSelectedFieldId(null);
     }
   };
 

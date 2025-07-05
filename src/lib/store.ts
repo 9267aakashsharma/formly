@@ -14,10 +14,11 @@ export interface FormState {
   updateFormMetaData: (metaData: Partial<FormMetaData>) => void;
   insertMockFields: () => void;
   addField: (fieldType: Form_Field_Types) => void;
+  updateAllFields: (fields: Field[]) => void;
   addFieldDuplicate: (fieldId: string) => void;
   deleteField: (fieldId: string) => void;
   updateField: (fieldId: string, updatedField: Partial<Field>) => void;
-  updateSelectedField: (fieldId: string | null) => void;
+  updateSelectedFieldId: (fieldId: string | null) => void;
 }
 
 export const useFormStore = create<FormState>((set) => ({
@@ -42,7 +43,7 @@ export const useFormStore = create<FormState>((set) => ({
     const mockFields = getMockFields();
     return set({ fields: mockFields });
   },
-  updateSelectedField: (fieldId: string | null) =>
+  updateSelectedFieldId: (fieldId: string | null) =>
     set({ selectedField: fieldId }),
   addField: (fieldType) => {
     const field = getDefaultFieldByType(fieldType);
@@ -52,6 +53,7 @@ export const useFormStore = create<FormState>((set) => ({
         : state
     );
   },
+  updateAllFields: (fields) => set({ fields }),
   addFieldDuplicate: (fieldId: string) =>
     set((state) => {
       const fieldToDuplicateIndex = state.fields.findIndex(
