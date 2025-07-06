@@ -24,10 +24,11 @@ const FormTitle = ({ mode }: { mode: Form_Modes }) => {
     <div
       aria-selected={isSelected}
       className={cn(
-        "h-fit rounded-lg shadow-md flex flex-col gap-y-4 aria-selected:border-foreground aria-selected:cursor-auto aria-selected:shadow-lg aria-selected:border-t-8 aria-selected:border-t-primary",
+        "h-fit rounded-lg flex flex-col gap-y-4 aria-selected:border-foreground aria-selected:cursor-auto aria-selected:shadow-lg aria-selected:border-t-8 aria-selected:border-t-primary",
         {
           "px-0 py-4 border-none cursor-auto": mode === FORM_MODES.PREVIEW,
-          "px-4 py-4 border border-foreground/20 cursor-pointer": isSelected,
+          "px-4 py-4 border border-foreground/20 shadow-md cursor-pointer":
+            isSelected,
         }
       )}
       onClick={handleClick}

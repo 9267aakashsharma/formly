@@ -92,7 +92,7 @@ const FloatingDockMobile = ({
                   id={item.id}
                   variant="secondary"
                   title={item.title}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 dark:bg-neutral-900"
+                  className="flex h-10 w-10 items-center justify-center rounded-full"
                 >
                   {item.icon}
                 </DraggableButton>
@@ -144,7 +144,7 @@ const FloatingDockDesktop = ({
         onMouseLeave={() => mouseX.set(Infinity)}
         onClick={handleClick}
         className={cn(
-          "mx-auto hidden h-16 items-end gap-4 rounded-2xl px-4 pb-3 md:flex bg-gray-50/60 dark:bg-neutral-900/60 backdrop-filter backdrop-blur-lg"
+          "mx-auto hidden h-16 items-end gap-4 rounded-2xl px-4 pb-4 md:flex bg-gray-50/60 dark:bg-neutral-900/60 backdrop-filter backdrop-blur-lg"
         )}
       >
         {items.map((item) => (
@@ -177,18 +177,18 @@ function IconContainer({
     return val - bounds.x - bounds.width / 2;
   });
 
-  const widthTransform = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
-  const heightTransform = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
+  const widthTransform = useTransform(distance, [-150, 0, 150], [30, 60, 30]);
+  const heightTransform = useTransform(distance, [-150, 0, 150], [30, 60, 30]);
 
   const widthTransformIcon = useTransform(
     distance,
     [-150, 0, 150],
-    [20, 40, 20]
+    [10, 20, 10]
   );
   const heightTransformIcon = useTransform(
     distance,
     [-150, 0, 150],
-    [20, 40, 20]
+    [10, 20, 10]
   );
 
   const width = useSpring(widthTransform, {
@@ -235,19 +235,20 @@ function IconContainer({
           </motion.div>
         )}
       </AnimatePresence>
-      <motion.div
-        style={{ width: widthIcon, height: heightIcon }}
-        className="flex items-center justify-center"
+      <DraggableButton
+        id={id}
+        title={title}
+        variant="ghost"
+        className="w-full h-full flex items-center justify-center rounded-full hover:bg-transparent"
       >
-        <DraggableButton
+        <motion.div
           id={id}
-          title={title}
-          variant="secondary"
-          className="w-full h-full flex items-center justify-center rounded-full"
+          style={{ width: widthIcon, height: heightIcon }}
+          className="flex items-center justify-center"
         >
           {icon}
-        </DraggableButton>
-      </motion.div>
+        </motion.div>
+      </DraggableButton>
     </motion.div>
   );
 }

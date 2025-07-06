@@ -12,8 +12,8 @@ const words = ["modern", "fast", "beautiful", "accessible", "responsive"];
 
 export default function Home() {
   return (
-    <div className="h-screen relative w-full overflow-hidden bg-background flex flex-col items-center justify-center rounded-lg">
-      <div className="absolute inset-0 w-full h-full bg-slate-900 z-20 [mask-image:radial-gradient(transparent,white)] pointer-events-none" />
+    <div className="h-screen relative w-full overflow-hidden bg-background flex flex-col items-center justify-center">
+      <div className="absolute inset-0 w-full h-full bg-neutral-200 dark:bg-slate-900 z-20 [mask-image:radial-gradient(transparent,white)] pointer-events-none" />
       <Boxes />
       <nav className="fixed top-0 left-0 w-full flex items-center justify-between p-4 z-30">
         <div className="flex items-center gap-2">
@@ -28,7 +28,7 @@ export default function Home() {
         </div>
         <Button variant="outline">Sign Up</Button>
       </nav>
-      <div className="relative z-20 mt-16 text-center text-4xl md:text-7xl mx-auto font-normal text-neutral-600 dark:text-neutral-400">
+      <div className="relative z-20 mt-16 text-center text-4xl md:text-7xl mx-auto font-normal text-foreground/80">
         Build <FlipWords words={words} /> <br />
         forms in minutes
       </div>
