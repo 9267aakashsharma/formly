@@ -13,7 +13,10 @@ export interface FormState {
   formMetaData: FormMetaData;
   updateFormMetaData: (metaData: Partial<FormMetaData>) => void;
   insertMockFields: () => void;
-  addField: (fieldType: Form_Field_Types) => void;
+  addField: (
+    fieldType: Form_Field_Types,
+    siblingFieldId?: string | null
+  ) => void;
   updateAllFields: (fields: Field[]) => void;
   addFieldDuplicate: (fieldId: string) => void;
   deleteField: (fieldId: string) => void;
@@ -45,13 +48,26 @@ export const useFormStore = create<FormState>((set) => ({
   },
   updateSelectedFieldId: (fieldId: string | null) =>
     set({ selectedField: fieldId }),
-  addField: (fieldType) => {
+  addField: (fieldType, siblingFieldId) => {
     const field = getDefaultFieldByType(fieldType);
-    return set((state) =>
-      field
-        ? { fields: [...state.fields, field], selectedField: field.id }
-        : state
-    );
+    if (!field) return set((state) => state);
+
+    if (siblingFieldId) {
+      return set((state) => {
+        const siblingIndex = state.fields.findIndex(
+          (f) => f.id === siblingFieldId
+        );
+        if (siblingIndex === -1) return state;
+        const newFields = [...state.fields];
+        newFields.splice(siblingIndex + 1, 0, field);
+        return { fields: newFields, selectedField: field.id };
+      });
+    } else {
+      return set((state) => ({
+        fields: [...state.fields, field],
+        selectedField: field.id,
+      }));
+    }
   },
   updateAllFields: (fields) => set({ fields }),
   addFieldDuplicate: (fieldId: string) =>

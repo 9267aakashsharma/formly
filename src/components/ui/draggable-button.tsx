@@ -7,20 +7,21 @@ function DraggableButton({ id, children, ...props }: ButtonProps) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: id as string,
   });
+
   const style = {
     transform: CSS.Translate.toString(transform),
   };
 
   return (
-    <Button
+    <div
       ref={setNodeRef}
-      style={style}
       {...listeners}
       {...attributes}
-      {...props}
+      style={style}
+      className="focus-visible:outline-none"
     >
-      {children}
-    </Button>
+      <Button {...props}>{children}</Button>
+    </div>
   );
 }
 

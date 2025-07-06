@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   closestCenter,
   DndContext,
@@ -19,22 +19,28 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { BetweenHorizontalStart } from "lucide-react";
 
 import { Field } from "../field";
 import { FORM_MODES } from "./constants";
 import { useFormStore } from "@/lib/store";
-import { FormTitle } from "../field/form-title";
-import { FIELD_MODES } from "../field-picker/constants";
-import { Field as Field_Type } from "../field-picker/types";
 import { SortableItem } from "../ui/sortable";
+import { FormTitle } from "../field/form-title";
+import { SPACE_ID } from "../form-space/constants";
+import { FormFieldsPicker } from "../field-picker";
+import { getDefaultFieldByType } from "@/lib/helpers";
+import { DroppableFieldSection } from "../form-space";
+import { FIELD_MODES, FORM_FIELD_TYPES } from "../field-picker/constants";
+import { Field as Field_Type, Form_Field_Types } from "../field-picker/types";
 
 const FormBuilder = () => {
+  const [newDraggedFieldType, setNewDraggedFieldType] =
+    useState<Form_Field_Types | null>(null);
   const [draggedField, setDraggedField] = useState<{
     field: Field_Type;
     serialNumber: number;
   } | null>(null);
-  const { fields, insertMockFields, updateAllFields } = useFormStore();
+  const { fields, insertMockFields, updateAllFields, addField } =
+    useFormStore();
   const sensors = useSensors(
     useSensor(MouseSensor, {
       activationConstraint: {
@@ -52,45 +58,77 @@ const FormBuilder = () => {
     })
   );
 
-  function handleDragStart(event: DragStartEvent) {
-    const { active } = event;
-    if (!active?.id) {
-      console.warn("Drag started without a valid active item id");
-      return;
-    }
-    const fieldIndex = fields.findIndex((f) => f.id === active.id);
-    if (fieldIndex === -1) {
-      console.warn("Field not found for id:", active.id);
-      return;
-    }
-    const field = fields[fieldIndex];
-    if (!field) {
-      console.warn("Field is undefined for id:", active.id);
-      return;
-    }
-    const serialNumber = fieldIndex + 1;
-    setDraggedField({ field, serialNumber });
-  }
-
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (active?.id && over?.id && active.id !== over.id) {
-      let [oldIndex, newIndex] = [-1, -1];
-      const fieldsArray = Array.isArray(fields) ? [...fields] : [];
-      fieldsArray.forEach((field, index) => {
-        if (field.id === active.id) oldIndex = index;
-        if (field.id === over.id) newIndex = index;
-      });
-
-      if (oldIndex === -1 || newIndex === -1) {
-        console.warn("Invalid drag indices", { oldIndex, newIndex });
+  const handleDragStart = useCallback(
+    (event: DragStartEvent) => {
+      const { active } = event;
+      if (!active?.id) {
+        console.warn("Drag started without a valid active item id");
         return;
       }
+      if (
+        Object.values(FORM_FIELD_TYPES).includes(active.id as Form_Field_Types)
+      ) {
+        setNewDraggedFieldType(active.id as Form_Field_Types);
+        setDraggedField(null);
+        return;
+      }
+      const fieldIndex = fields.findIndex((f) => f.id === active.id);
+      if (fieldIndex === -1) {
+        console.warn("Field not found for id:", active.id);
+        return;
+      }
+      const field = fields[fieldIndex];
+      if (!field) {
+        console.warn("Field is undefined for id:", active.id);
+        return;
+      }
+      const serialNumber = fieldIndex + 1;
+      setDraggedField({ field, serialNumber });
+    },
+    [setNewDraggedFieldType, setDraggedField, fields]
+  );
 
-      const newFields = arrayMove(fieldsArray, oldIndex, newIndex);
-      updateAllFields(newFields);
-    }
-  }
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      try {
+        const { active, over } = event;
+        console.log("Drag Ended:", { active, over });
+        if (active?.id && over?.id && active.id !== over.id) {
+          if (newDraggedFieldType && active.id === newDraggedFieldType) {
+            addField(
+              newDraggedFieldType,
+              over?.id === SPACE_ID ? null : (over?.id as string)
+            );
+          } else {
+            let [oldIndex, newIndex] = [-1, -1];
+            const fieldsArray = Array.isArray(fields) ? [...fields] : [];
+            fieldsArray.forEach((field, index) => {
+              if (field.id === active.id) oldIndex = index;
+              if (field.id === over.id) newIndex = index;
+            });
+
+            if (oldIndex === -1 || newIndex === -1)
+              throw new Error("Invalid drag indices");
+            const newFields = arrayMove(fieldsArray, oldIndex, newIndex);
+            updateAllFields(newFields);
+          }
+        }
+      } catch (error) {
+        console.error("Error during drag end:", error);
+      } finally {
+        setNewDraggedFieldType(() => null);
+        setDraggedField(() => null);
+      }
+    },
+    [
+      newDraggedFieldType,
+      setNewDraggedFieldType,
+      setDraggedField,
+      fields,
+      updateAllFields,
+      addField,
+    ]
+  );
 
   // NOTE: This effect is for development purposes only.
   useEffect(() => {
@@ -101,33 +139,36 @@ const FormBuilder = () => {
 
   return (
     <section className="space-y-4 flex flex-col justify-center items-center">
-      <div className="py-8 flex-1 w-full sm:max-w-full md:max-w-1/2 grid grid-flow-row gap-y-4 md:gap-y-6">
-        <FormTitle mode={FORM_MODES.EDIT} />
-        <DndContext
-          sensors={sensors}
-          onDragEnd={handleDragEnd}
-          onDragStart={handleDragStart}
-          collisionDetection={closestCenter}
-        >
-          {fields && fields.length > 0 ? (
-            <SortableContext
-              items={fields.map((field) => field.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              {fields.map((field, i) => (
-                <SortableItem id={field.id} key={field.id || i + 1}>
-                  <FieldItem field={field} serialNumber={i + 1} />
-                </SortableItem>
-              ))}
-            </SortableContext>
-          ) : (
-            <EmptyFieldState />
-          )}
-          <DragOverlay>
-            {draggedField ? <FieldItem {...draggedField} /> : null}
-          </DragOverlay>
-        </DndContext>
-      </div>
+      <DndContext
+        sensors={sensors}
+        onDragEnd={handleDragEnd}
+        onDragStart={handleDragStart}
+        collisionDetection={closestCenter}
+      >
+        <FormFieldsPicker />
+        <div className="pt-8 w-full max-w-full md:max-w-1/2 flex-1 flex flex-col gap-y-4 md:gap-y-6">
+          <FormTitle mode={FORM_MODES.EDIT} />
+          <SortableContext
+            items={fields.map((field) => field.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            {fields.map((field, i) => (
+              <SortableItem id={field.id} key={field.id || i + 1}>
+                <FieldItem field={field} serialNumber={i + 1} />
+              </SortableItem>
+            ))}
+          </SortableContext>
+        </div>
+        <DroppableFieldSection
+          withEmptyPlaceholder={!fields || !fields.length}
+          minHeight={`calc(70vh / ${fields.length || 1})`}
+          className="shrink-0 w-full max-w-full md:max-w-1/2 "
+        />
+        <DragOverlay>
+          {draggedField ? <FieldItem {...draggedField} /> : null}
+          <NewFieldDragOverlay type={newDraggedFieldType} />
+        </DragOverlay>
+      </DndContext>
     </section>
   );
 };
@@ -155,13 +196,11 @@ const FieldItem = ({
   );
 };
 
-const EmptyFieldState = () => {
-  return (
-    <div className="min-h-[50vh] p-4 border border-foreground/20 hover:border-foreground/40 rounded-lg shadow-md flex flex-col items-center justify-center gap-y-8">
-      <BetweenHorizontalStart size={64} className="text-muted-foreground" />
-      <p className="text-lg text-muted-foreground">
-        Drag and drop items from elements list to add here
-      </p>
+const NewFieldDragOverlay = ({ type }: { type: Form_Field_Types | null }) => {
+  const newField = type ? getDefaultFieldByType(type) : null;
+  return newField ? (
+    <div className="w-full">
+      <FieldItem field={newField} serialNumber={0} />
     </div>
-  );
+  ) : null;
 };

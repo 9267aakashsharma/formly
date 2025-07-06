@@ -58,7 +58,7 @@ const FieldWrapper = ({
   return (
     <div
       aria-selected={mode === FIELD_MODES.EDIT}
-      className="p-4 pt-6 bg-background border border-foreground/20 cursor-pointer rounded-lg shadow-md flex flex-col gap-y-4 aria-selected:border-foreground aria-selected:cursor-auto aria-selected:shadow-lg aria-selected:border-l-8 aria-selected:border-l-primary"
+      className="min-w-[40vh] md:min-w-80 p-4 pt-6 bg-background border border-foreground/20 cursor-pointer rounded-lg shadow-md flex flex-col gap-y-4 aria-selected:border-foreground aria-selected:cursor-auto aria-selected:shadow-lg aria-selected:border-l-8 aria-selected:border-l-primary"
       onClick={handleClick}
     >
       {withTitle && (

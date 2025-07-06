@@ -10,6 +10,7 @@ import { FORM_FIELDS } from "./constants";
 import { useFormStore } from "@/lib/store";
 import { Form_Field_Types } from "./types";
 import useMobileView from "@/hooks/useIsMobile";
+import { DraggableButton } from "../ui/draggable-button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 const FormFieldsPicker = () => {
@@ -49,7 +50,7 @@ const FormFieldsPicker = () => {
       </PopoverTrigger>
       <PopoverContent
         align="center"
-        className="w-fit h-fit min-w-0 border-none bg-transparent overflow-hidden"
+        className="w-fit h-fit min-w-0 border-none bg-transparent overflow-y-hidden"
         side={isMobile ? "top" : "bottom"}
       >
         <motion.ul
@@ -61,19 +62,19 @@ const FormFieldsPicker = () => {
           className="flex flex-col items-start gap-2"
         >
           {FORM_FIELDS.map((field) => (
-            <Button
+            <DraggableButton
+              id={field.type}
               key={field.type}
               autoFocus={false}
               variant="secondary"
-              onDoubleClick={() => handleAddField(field.type)}
-              title={`Double click or drag to add ${field.name}`}
-              onClick={() => isMobile && handleAddField(field.type)}
+              title={`Click or drag to add ${field.name}`}
+              onClick={() => handleAddField(field.type)}
               className="h-fit cursor-pointer flex justify-center items-center rounded-full p-0"
             >
               <div className="w-10 h-10 md:w-11 md:h-11 flex items-center justify-center">
                 <FieldIcon size={isMobile ? 18 : 20} fieldType={field.type} />
               </div>
-            </Button>
+            </DraggableButton>
           ))}
         </motion.ul>
       </PopoverContent>
