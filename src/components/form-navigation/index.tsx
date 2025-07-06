@@ -17,9 +17,9 @@ const FormNavigation = () => {
             alt="formly"
             width={50}
             height={50}
-            className="w-6 h-6 md:w-10 md:h-10"
+            className="w-8 h-8 md:w-10 md:h-10"
           />
-          <h1 className="text-primary text-2xl text-ellipsis whitespace-nowrap overflow-hidden">
+          <h1 className="text-primary text-lg md:text-2xl text-ellipsis whitespace-nowrap overflow-hidden">
             {formMetaData.title || "Untitled Form"}
           </h1>
         </div>

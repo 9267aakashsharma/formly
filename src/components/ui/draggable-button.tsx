@@ -18,9 +18,11 @@ function DraggableButton({ id, children, ...props }: ButtonProps) {
       {...listeners}
       {...attributes}
       style={style}
-      className="focus-visible:outline-none"
+      className="focus-visible:outline-none flex items-center justify-center w-fit h-fit"
     >
-      <Button {...props}>{children}</Button>
+      <Button id={id} {...props}>
+        {children}
+      </Button>
     </div>
   );
 }
