@@ -2,7 +2,7 @@
 
 ## Demo
 
-<iframe allowfullscreen="allowfullscreen" src="https://drive.google.com/file/d/1thf-632YIUya3PjZAmK5jAQR8uJObiLw/preview" width="640" height="480" allow="autoplay"></iframe>
+[Demo Video](https://drive.google.com/file/d/1thf-632YIUya3PjZAmK5jAQR8uJObiLw/preview)
 
 ## Challenge: FormKit - A Visual Form Builder
 
