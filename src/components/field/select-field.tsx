@@ -18,7 +18,6 @@ interface SelectFieldProps {
   mode: Field_Modes;
   serialNumber?: number;
   field: Field_With_Options;
-  placeholder?: string;
   selectProps?: React.ComponentProps<typeof SelectPrimitive.Root>;
 }
 
@@ -26,7 +25,6 @@ export const SelectField = ({
   mode,
   field,
   selectProps,
-  placeholder,
   serialNumber,
 }: SelectFieldProps) => {
   const { options } = field || {};
@@ -56,7 +54,13 @@ export const SelectField = ({
               "pointer-events-auto": mode !== FIELD_MODES.DRAFT,
             })}
           >
-            <SelectValue placeholder={placeholder || "Select answer..."} />
+            <SelectValue
+              placeholder={
+                field.placeholder ||
+                field.defaultPlaceholder ||
+                "Select answer..."
+              }
+            />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>

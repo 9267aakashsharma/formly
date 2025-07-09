@@ -1,16 +1,26 @@
-import { Copy, Trash2 } from "lucide-react";
+import { useCallback, useState } from "react";
+import { motion } from "motion/react";
+import { Copy, EllipsisVertical, Trash2 } from "lucide-react";
 
-import { Button } from "../ui/button";
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarTrigger,
+} from "../ui/menubar";
+import { Badge } from "../ui/badge";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { Separator } from "../ui/separator";
 import { Switch } from "../ui/switch";
-import { Field, Field_Modes, Form_Field_Types } from "../field-picker/types";
-import { FIELD_MODES, FORM_FIELDS } from "../field-picker/constants";
+import { Button } from "../ui/button";
+import { Textarea } from "../ui/textarea";
 import { useFormStore } from "@/lib/store";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
-import { Badge } from "../ui/badge";
+import { Separator } from "../ui/separator";
 import { FieldIcon } from "../field-picker/icons";
+import { FIELD_MODES, FORM_FIELDS } from "../field-picker/constants";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { Field, Field_Modes, Form_Field_Types } from "../field-picker/types";
 
 interface FieldWrapperProps {
   withTitle?: boolean;
@@ -40,20 +50,47 @@ const FieldWrapper = ({
     label: fieldLabel,
     required: fieldRequired,
     placeholder: fieldPlaceholder,
+    defaultLabel: fieldDefaultLabel,
+    defaultPlaceholder: fieldDefaultPlaceholder,
   } = field || {};
+  const [isPlaceholderVisible, setIsPlaceholderVisible] = useState(false);
   const { updateSelectedFieldId, updateField } = useFormStore();
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     if (mode === FIELD_MODES.DRAFT && fieldId) {
       updateSelectedFieldId(fieldId);
     }
-  };
+  }, [mode, fieldId, updateSelectedFieldId]);
 
-  const handleQuestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (fieldId) {
-      updateField(fieldId, { label: e.target.value });
+  const handleQuestionChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      if (fieldId) {
+        updateField(fieldId, { label: e.target.value });
+      }
+    },
+    [fieldId, updateField]
+  );
+
+  const handlePlaceholderChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (fieldId) {
+        updateField(fieldId, { placeholder: e.target.value });
+      }
+    },
+    [fieldId, updateField]
+  );
+
+  const handlePlaceholderToggle = useCallback(() => {
+    if (!fieldId) return;
+    if (isPlaceholderVisible) {
+      updateField(fieldId, { placeholder: "" });
+    } else {
+      updateField(fieldId, {
+        placeholder: fieldDefaultPlaceholder || "",
+      });
     }
-  };
+    setIsPlaceholderVisible(!isPlaceholderVisible);
+  }, [fieldId, fieldDefaultPlaceholder, updateField, isPlaceholderVisible]);
 
   return (
     <div
@@ -67,31 +104,77 @@ const FieldWrapper = ({
             <span>#</span>
             {serialNumber}
           </h6>
-          <Badge variant="secondary">
-            {fieldType && (
-              <FieldIcon
-                size={20}
-                label={fieldLabel}
-                fieldType={fieldType}
-                className="mr-1"
-              />
-            )}{" "}
-            {getFieldTypeLabel(fieldType)}
-          </Badge>
+          <div className="flex items-center gap-x-1">
+            <Badge variant="secondary">
+              {fieldType && (
+                <FieldIcon
+                  size={20}
+                  label={fieldLabel}
+                  fieldType={fieldType}
+                  className="mr-1"
+                />
+              )}{" "}
+              {getFieldTypeLabel(fieldType)}
+            </Badge>
+            <Menubar className="border-none">
+              <MenubarMenu>
+                <MenubarTrigger
+                  title="More options"
+                  className="cursor-pointer overflow-hidden rounded-full aspect-square outline-none focus:outline-none"
+                >
+                  <EllipsisVertical size={16} />
+                </MenubarTrigger>
+                <MenubarContent className="min-w-fit">
+                  <MenubarItem
+                    className="cursor-pointer"
+                    title="Edit default placeholder"
+                    onClick={handlePlaceholderToggle}
+                  >
+                    {isPlaceholderVisible
+                      ? "Hide Placeholder"
+                      : "Edit Placeholder"}
+                  </MenubarItem>
+                </MenubarContent>
+              </MenubarMenu>
+            </Menubar>
+          </div>
         </div>
       )}
       {mode === FIELD_MODES.EDIT ? (
-        <Input
-          autoFocus
-          type="text"
-          placeholder={fieldPlaceholder || "Untitled Question"}
-          value={fieldLabel || ""}
-          onChange={handleQuestionChange}
-        />
+        <div className="flex flex-col gap-y-2">
+          <Textarea
+            rows={1}
+            required
+            autoFocus
+            id="Question"
+            name="Question"
+            value={fieldLabel || ""}
+            onChange={handleQuestionChange}
+            placeholder={fieldDefaultLabel || "Untitled Question"}
+          />
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{
+              opacity: isPlaceholderVisible ? 1 : 0,
+              height: isPlaceholderVisible ? "auto" : 0,
+            }}
+            transition={{ duration: 0.2 }}
+            className="flex items-center gap-x-2 overflow-hidden"
+          >
+            <Input
+              type="text"
+              id="Placeholder"
+              name="Placeholder"
+              value={fieldPlaceholder || ""}
+              onChange={handlePlaceholderChange}
+              placeholder={fieldDefaultPlaceholder || "Edit placeholder..."}
+            />
+          </motion.div>
+        </div>
       ) : (
         <h4 className="text-xl font-semibold">
-          {fieldLabel || fieldPlaceholder || "Untitled Question"}
-          {fieldRequired && <span className="text-red-500 ml-1">*</span>}
+          {fieldLabel || fieldDefaultLabel || "Untitled Question"}
+          {fieldRequired && <span className="text-destructive ml-1">*</span>}
         </h4>
       )}
       {children}

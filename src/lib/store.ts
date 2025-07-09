@@ -15,7 +15,8 @@ export interface FormState {
   insertMockFields: () => void;
   addField: (
     fieldType: Form_Field_Types,
-    siblingFieldId?: string | null
+    siblingFieldId?: string | null,
+    position?: "before" | "after"
   ) => void;
   updateAllFields: (fields: Field[]) => void;
   addFieldDuplicate: (fieldId: string) => void;
@@ -48,7 +49,7 @@ export const useFormStore = create<FormState>((set) => ({
   },
   updateSelectedFieldId: (fieldId: string | null) =>
     set({ selectedField: fieldId }),
-  addField: (fieldType, siblingFieldId) => {
+  addField: (fieldType, siblingFieldId, position) => {
     const field = getDefaultFieldByType(fieldType);
     if (!field) return set((state) => state);
 
@@ -59,7 +60,11 @@ export const useFormStore = create<FormState>((set) => ({
         );
         if (siblingIndex === -1) return state;
         const newFields = [...state.fields];
-        newFields.splice(siblingIndex + 1, 0, field);
+        if (position === "before") {
+          newFields.splice(siblingIndex, 0, field);
+        } else {
+          newFields.splice(siblingIndex + 1, 0, field);
+        }
         return { fields: newFields, selectedField: field.id };
       });
     } else {

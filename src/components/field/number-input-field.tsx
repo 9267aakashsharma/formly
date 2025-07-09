@@ -27,7 +27,9 @@ export const NumberInputField = ({
           "w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500",
           inputProps?.className
         )}
-        placeholder={inputProps?.placeholder || "Enter answer..."}
+        placeholder={
+          field?.placeholder || field?.defaultPlaceholder || "Enter answer..."
+        }
         disabled={
           inputProps?.disabled !== undefined
             ? inputProps.disabled

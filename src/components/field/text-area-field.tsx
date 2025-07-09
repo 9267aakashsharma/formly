@@ -26,7 +26,9 @@ export const TextAreaField = ({
           "w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500",
           textAreaProps?.className
         )}
-        placeholder={textAreaProps?.placeholder || "Enter answer..."}
+        placeholder={
+          field?.placeholder || field.defaultPlaceholder || "Enter answer..."
+        }
         disabled={
           textAreaProps?.disabled !== undefined
             ? textAreaProps.disabled

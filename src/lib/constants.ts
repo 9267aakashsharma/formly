@@ -7,7 +7,9 @@ export const TEXT_FIELD_TYPE: Field = {
   id: nanoid(),
   type: FORM_FIELD_TYPES.TEXT_INPUT,
   label: "",
-  placeholder: "Text Input Question",
+  placeholder: "",
+  defaultLabel: "Text Input Question",
+  defaultPlaceholder: "Enter text",
   required: false,
 };
 
@@ -15,7 +17,9 @@ export const NUMBER_FIELD_TYPE: Field = {
   id: nanoid(),
   type: FORM_FIELD_TYPES.NUMBER_INPUT,
   label: "",
-  placeholder: "Number Input Question",
+  placeholder: "",
+  defaultLabel: "Number Input Question",
+  defaultPlaceholder: "Enter a number",
   required: false,
 };
 
@@ -23,7 +27,9 @@ export const EMAIL_FIELD_TYPE: Field = {
   id: nanoid(),
   type: FORM_FIELD_TYPES.EMAIL_INPUT,
   label: "",
-  placeholder: "Email Input Question",
+  placeholder: "",
+  defaultLabel: "Email Input Question",
+  defaultPlaceholder: "Enter email",
   required: false,
 };
 
@@ -31,7 +37,9 @@ export const TEXTAREA_FIELD_TYPE: Field = {
   id: nanoid(),
   type: FORM_FIELD_TYPES.TEXTAREA,
   label: "",
-  placeholder: "Text Area Question",
+  placeholder: "",
+  defaultLabel: "Text Area Question",
+  defaultPlaceholder: "Enter text here",
   required: false,
 };
 
@@ -39,7 +47,9 @@ export const SELECT_DROPDOWN_FIELD_TYPE: Field = {
   id: nanoid(),
   type: FORM_FIELD_TYPES.SELECT_DROPDOWN,
   label: "",
-  placeholder: "Select Dropdown Question",
+  placeholder: "",
+  defaultLabel: "Select Dropdown Question",
+  defaultPlaceholder: "Select an option",
   required: false,
   options: [],
 };
@@ -48,7 +58,9 @@ export const CHECKBOX_FIELD_TYPE: Field = {
   id: nanoid(),
   type: FORM_FIELD_TYPES.CHECKBOX,
   label: "",
-  placeholder: "Checkbox Question",
+  placeholder: "",
+  defaultLabel: "Checkbox Question",
+  defaultPlaceholder: "Select options",
   required: false,
   options: [],
 };
@@ -57,7 +69,9 @@ export const RADIO_BUTTON_GROUP_FIELD_TYPE: Field = {
   id: nanoid(),
   type: FORM_FIELD_TYPES.RADIO_BUTTON_GROUP,
   label: "",
-  placeholder: "Radio Button Group Question",
+  placeholder: "",
+  defaultLabel: "Radio Button Group Question",
+  defaultPlaceholder: "Select an option",
   required: false,
   options: [],
 };

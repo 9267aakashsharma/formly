@@ -15,7 +15,9 @@ export type Field_Modes = (typeof FIELD_MODES)[keyof typeof FIELD_MODES];
 export interface Base_Field {
   id: string;
   label: string;
-  placeholder?: string;
+  defaultLabel: string;
+  placeholder: string;
+  defaultPlaceholder: string;
   value?: string;
   required?: boolean;
 }
