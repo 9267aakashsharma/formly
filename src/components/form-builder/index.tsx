@@ -91,13 +91,14 @@ const FormBuilder = () => {
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
       try {
-        const { active, over } = event;
-        console.log("Drag Ended:", { active, over });
+        const { active, over, delta } = event;
+        console.log("Drag Ended:", { active, over, delta });
         if (active?.id && over?.id && active.id !== over.id) {
           if (newDraggedFieldType && active.id === newDraggedFieldType) {
             addField(
               newDraggedFieldType,
-              over?.id === SPACE_ID ? null : (over?.id as string)
+              over?.id === SPACE_ID ? null : (over?.id as string),
+              delta.y < 0 ? "before" : "after"
             );
           } else {
             let [oldIndex, newIndex] = [-1, -1];

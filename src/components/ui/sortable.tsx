@@ -8,21 +8,29 @@ const SortableItem: React.FC<HTMLAttributes<HTMLDivElement>> = ({
   id,
   children,
 }) => {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: id as string });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: id as string });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    zIndex: isDragging ? "10" : "auto",
+    opacity: isDragging ? 0.3 : 1,
   };
 
   return (
-    <div className="relative">
-      <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div ref={setNodeRef} style={style} className="relative">
+      <div {...attributes} {...listeners}>
         <Button
           size="sm"
           variant="ghost"
-          className="absolute top-0.5 left-1/2 -translate-x-1/2 z-10"
+          className="absolute top-0.5 left-1/2 -translate-x-1/2 z-5"
         >
           <GripHorizontal />
         </Button>
